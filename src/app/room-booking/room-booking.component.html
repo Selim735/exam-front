@@ -1,1 +1,77 @@
-<p>room-booking works!</p>
+<form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="roomName">Nom de la salle</label>
+      <input id="roomName" formControlName="roomName" type="text" />
+      <div *ngIf="bookingForm.get('roomName')?.touched && bookingForm.get('roomName')?.invalid">
+        <small class="error">Le nom de la salle est requis.</small>
+      </div>
+    </div>
+  
+    <div>
+      <label for="reservationDate">Date de réservation</label>
+      <input id="reservationDate" formControlName="reservationDate" type="date" />
+      <div *ngIf="bookingForm.get('reservationDate')?.touched && bookingForm.get('reservationDate')?.hasError('required')">
+        <small class="error">La date de réservation est requise.</small>
+      </div>
+      <div *ngIf="bookingForm.get('reservationDate')?.touched && bookingForm.get('reservationDate')?.hasError('notFuture')">
+        <small class="error">La date doit être dans le futur.</small>
+      </div>
+    </div>
+  
+    <div>
+      <label for="startTime">Heure de début</label>
+      <input id="startTime" formControlName="startTime" type="time" />
+      <div *ngIf="bookingForm.get('startTime')?.touched && bookingForm.get('startTime')?.invalid">
+        <small class="error">Veuillez renseigner l'heure de début.</small>
+      </div>
+    </div>
+  
+    <div>
+      <label for="duration">Durée (heures)</label>
+      <input id="duration" formControlName="duration" type="number" min="1" max="8" />
+      <div *ngIf="bookingForm.get('duration')?.touched && bookingForm.get('duration')?.hasError('required')">
+        <small class="error">La durée est requise.</small>
+      </div>
+      <div *ngIf="bookingForm.get('duration')?.touched && bookingForm.get('duration')?.hasError('min')">
+        <small class="error">La durée minimale est 1 heure.</small>
+      </div>
+      <div *ngIf="bookingForm.get('duration')?.touched && bookingForm.get('duration')?.hasError('max')">
+        <small class="error">La durée maximale est 8 heures.</small>
+      </div>
+    </div>
+  
+    <div>
+      <label for="participants">Nombre de participants</label>
+      <input id="participants" formControlName="participants" type="number" max="50" />
+      <div *ngIf="bookingForm.get('participants')?.touched && bookingForm.get('participants')?.hasError('required')">
+        <small class="error">Le nombre de participants est requis.</small>
+      </div>
+      <div *ngIf="bookingForm.get('participants')?.touched && bookingForm.get('participants')?.hasError('max')">
+        <small class="error">Le nombre maximal de participants est 50.</small>
+      </div>
+    </div>
+  
+    <div>
+      <label>Équipements :</label>
+      <div formGroupName="equipments">
+        <div *ngFor="let eq of availableEquipments">
+          <input
+            type="checkbox"
+            [formControlName]="eq.name"
+            [id]="eq.name"
+          />
+          <label [for]="eq.name">{{ eq.label }}</label>
+        </div>
+      </div>
+      <div *ngIf="formInvalidError && getSelectedEquipments().length === 0">
+        <small class="error">Veuillez sélectionner au moins un équipement.</small>
+      </div>
+    </div>
+  
+    <div *ngIf="formInvalidError" class="error">
+      Veuillez corriger les erreurs dans le formulaire.
+    </div>
+  
+    <button type="submit">Réserver</button>
+  </form>
+  
